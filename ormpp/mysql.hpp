@@ -13,6 +13,7 @@
 #include "entity.hpp"
 #include "type_mapping.hpp"
 #include "utility.hpp"
+#include <glog/logging.h>
 
 namespace ormpp {
 
@@ -30,7 +31,7 @@ class mysql {
   static void set_last_error(std::string last_error) {
     has_error_ = true;
     last_error_ = std::move(last_error);
-    std::cout << last_error_ << std::endl;
+    LOG(ERROR)<< last_error_ << std::endl;
   }
 
   std::string get_last_error() const { return last_error_; }
@@ -87,7 +88,7 @@ class mysql {
     std::string sql = generate_createtb_sql<T>(std::forward<Args>(args)...);
     sql += " DEFAULT CHARSET=utf8";
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     if (mysql_query(con_, sql.data())) {
       set_last_error(mysql_error(con_));
@@ -308,7 +309,7 @@ class mysql {
   bool delete_records_s(const std::string &str, Args &&...args) {
     auto sql = generate_delete_sql<T>(str);
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     stmt_ = mysql_stmt_init(con_);
     if (!stmt_) {
@@ -344,7 +345,7 @@ class mysql {
       const std::string &str, Args &&...args) {
     std::string sql = generate_query_sql<T>(str);
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     constexpr auto SIZE = iguana::get_value<T>();
 
@@ -431,7 +432,7 @@ class mysql {
     static_assert(iguana::is_tuple<T>::value);
     constexpr auto SIZE = std::tuple_size_v<T>;
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     stmt_ = mysql_stmt_init(con_);
     if (!stmt_) {
@@ -563,7 +564,7 @@ class mysql {
       Args &&...args) {
     std::string sql = generate_query_sql<T>(args...);
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     constexpr auto SIZE = iguana::get_value<T>();
 
@@ -643,7 +644,7 @@ class mysql {
 
     std::string sql = s;
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     constexpr auto Args_Size = sizeof...(Args);
     if constexpr (Args_Size != 0) {
@@ -790,7 +791,7 @@ class mysql {
   // just support execute string sql without placeholders
   bool execute(const std::string &sql) {
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     stmt_ = mysql_stmt_init(con_);
     if (!stmt_) {
@@ -1035,7 +1036,7 @@ class mysql {
                                                 bool get_insert_id = false,
                                                 Args &&...args) {
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     stmt_ = mysql_stmt_init(con_);
     if (!stmt_) {
@@ -1065,7 +1066,7 @@ class mysql {
                                                 bool get_insert_id = false,
                                                 Args &&...args) {
 #ifdef ORMPP_ENABLE_LOG
-    std::cout << sql << std::endl;
+    LOG(ERROR)<< sql << std::endl;
 #endif
     stmt_ = mysql_stmt_init(con_);
     if (!stmt_) {
